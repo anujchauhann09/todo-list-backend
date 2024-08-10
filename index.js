@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
+const helmet = require('helmet')
 const TodoModel = require('./models/todoList.model.js')
 const User = require('./models/user.model.js')
 const authRoutes = require('./routes/auth')
@@ -14,6 +15,19 @@ var app = express()
 app.use(cors())
 app.use(express.json())
 app.use('/auth', authRoutes)
+app.use(helmet()) // helmet to set various HTTP headers for security
+
+// Customize specific headers
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+  },
+}))
+
+app.use(helmet.hsts({
+  maxAge: 31536000, // 1 year in seconds
+  includeSubDomains: true,
+}))
  
 mongoose.connect(DB_CONNECTION_URL)
 // console.log(DB_CONNECTION_URL)
