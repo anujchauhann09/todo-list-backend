@@ -25,6 +25,20 @@ mongoose.connection.on("connected", () => {
     console.log("MongoDB connected successfully.");
 });
 
+const testConnection = async () => {
+    try {
+        const todoResult = await mongoose.connection.db.collection('todolists').findOne({})
+        console.log('Todo list query result:', todoResult)
+        
+        const userResult = await mongoose.connection.db.collection('users').findOne({})
+        console.log('User query result:', userResult)
+    } catch (error) {
+        console.error('Error during test query:', error)
+    }
+}
+  
+testConnection()
+
 app.post('/addTodoList', authenticateToken, (req, res) => {
     TodoModel.create({
         userId: req.user.id,
