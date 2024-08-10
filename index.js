@@ -6,8 +6,8 @@ const TodoModel = require('./models/todoList.model.js')
 const authRoutes = require('./routes/auth')
 const authenticateToken = require('./middleware/authenticateToken.js')
 
-const DB_CONNECTION_URL = process.env.DB_CONNECTION_URL || null
-const PORT = process.env.PORT || 5173
+const DB_CONNECTION_URL = process.env.DB_CONNECTION_URL
+const PORT = process.env.PORT
 
 var app = express()
 app.use(cors())
