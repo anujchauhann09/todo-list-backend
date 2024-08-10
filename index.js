@@ -18,8 +18,12 @@ mongoose.connect(DB_CONNECTION_URL)
 // console.log(DB_CONNECTION_URL)
 
 mongoose.connection.on("error", error => {
-    // console.log(`MongoDB connection error: `, error)
+    console.log(`MongoDB connection error: `, error)
 })
+
+mongoose.connection.on("connected", () => {
+    console.log("MongoDB connected successfully.");
+});
 
 app.post('/addTodoList', authenticateToken, (req, res) => {
     TodoModel.create({
