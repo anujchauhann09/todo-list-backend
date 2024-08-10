@@ -3,6 +3,7 @@ const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const TodoModel = require('./models/todoList.model.js')
+const User = require('./models/user.model.js')
 const authRoutes = require('./routes/auth')
 const authenticateToken = require('./middleware/authenticateToken.js')
 
@@ -27,17 +28,20 @@ mongoose.connection.on("connected", () => {
 
 const testConnection = async () => {
     try {
-        const todoResult = await mongoose.connection.db.collection('todolists').findOne({})
-        console.log('Todo list query result:', todoResult)
-        
-        const userResult = await mongoose.connection.db.collection('users').findOne({})
-        console.log('User query result:', userResult)
-    } catch (error) {
+      const todoResult = await TodoModel.findOne({})
+      console.log('Todo list query result:', todoResult)
+  
+      const userResult = await User.findOne({})
+      console.log('User query result:', userResult)
+      
+  } catch (error) {
         console.error('Error during test query:', error)
-    }
+  }
 }
   
-testConnection()
+mongoose.connection.once('open', () => {
+  testConnection()
+})
 
 app.post('/addTodoList', authenticateToken, (req, res) => {
     TodoModel.create({
