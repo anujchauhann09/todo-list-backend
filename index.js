@@ -15,10 +15,10 @@ app.use(express.json())
 app.use('/auth', authRoutes)
  
 mongoose.connect(DB_CONNECTION_URL)
-// console.log(DB_CONNECTION_URL)
+console.log(DB_CONNECTION_URL)
 
 mongoose.connection.on("error", error => {
-    // console.log(`MongoDB connection error: `, error)
+    console.log(`MongoDB connection error: `, error)
 })
 
 app.post('/addTodoList', authenticateToken, (req, res) => {
