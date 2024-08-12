@@ -16,7 +16,12 @@ const todoSchema = new mongoose.Schema({
     },
     deadline: {
         type: String
-    }
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
 })
 
 const TodoList = mongoose.model("TodoList", todoSchema)
