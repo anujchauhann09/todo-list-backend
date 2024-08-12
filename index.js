@@ -82,7 +82,8 @@ app.post('/addTodoList', authenticateToken, (req, res) => {
         userId: req.user.id,
         task: req.body.task,
         status: req.body.status,
-        deadline: req.body.deadline
+        deadline: req.body.deadline,
+        email: req.body.email
     })
         .then(todo => {
             return res.json(todo)
@@ -97,7 +98,8 @@ app.post('/updateTodoList/:id', authenticateToken, (req, res) => {
     const updatedData = {
         task: req.body.task,
         status: req.body.status,
-        deadline: req.body.deadline
+        deadline: req.body.deadline,
+        email: req.body.email
     }
     const userId = req.user.id
 
