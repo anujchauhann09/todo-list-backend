@@ -4,8 +4,8 @@
   "description": ".",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "jest"
   },
   "author": "Anuj Chauhan",
   "license": "ISC",
@@ -21,5 +21,9 @@
     "mongoose": "^8.5.2",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.14"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemailer-mock": "^2.0.6"
   }
 }

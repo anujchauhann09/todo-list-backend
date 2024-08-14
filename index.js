@@ -4,13 +4,14 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const helmet = require('helmet')
 const cron = require('node-cron');
-const sendEmail = require('./utilities/googleOAuth')
+const sendEmail = require('./utilities/mailer.js')
 const TodoModel = require('./models/todoList.model.js')
 const User = require('./models/user.model.js')
 const authRoutes = require('./routes/auth')
 const authenticateToken = require('./middleware/authenticateToken.js')
 
 const DB_CONNECTION_URL = process.env.DB_CONNECTION_URL
+// console.log(DB_CONNECTION_URL)
 const PORT = process.env.PORT
 
 var app = express()
@@ -60,22 +61,26 @@ mongoose.connection.once('open', () => {
 })
 
 cron.schedule('0 * * * *', async () => {
-    try {
-      const now = new Date();
-      const todos = await TodoModel.find({ deadline: { $lte: now } }).populate('userId')
-  
-      todos.forEach(todo => {
-        const emailSubject = 'Reminder: Your Task Deadline is Approaching'
-        const emailText = `Hi, \n\nThis is a reminder that your task "${todo.task}" is due on ${todo.deadline}. \n\nBest regards, \nTodo Hub App`
-  
-        sendEmail(todo.userId.email, emailSubject, emailText)
-          .then(info => console.log('Email sent:', info.response))
-          .catch(err => console.error('Error sending email:', err))
-      });
-    } catch (error) {
-      console.error('Error checking deadlines:', error)
-    }
-});
+  try {
+    const now = new Date()
+    const todos = await TodoModel.find({ deadline: { $lte: now }, isRemainderSend: false }).populate('userId')
+
+    todos.forEach(todo => {
+      const emailSubject = 'Reminder: Your Task Deadline is Approaching';
+      const emailText = `Hi, \n\nThis is a reminder that your task "${todo.task}" is due on ${todo.deadline}. \n\nBest regards, \nTodo Hub App`
+
+      sendEmail(todo.email, emailSubject, emailText)
+        .then(info => {
+          console.log('Email sent:', info.response);
+          TodoModel.findByIdAndUpdate(todo._id, { isRemainderSend: true })
+            .catch(err => console.error('Error updating todo:', err))
+        })
+        .catch(err => console.error('Error sending email:', err))
+    })
+  } catch (error) {
+    console.error('Error checking deadlines:', error)
+  }
+})
 
 app.post('/addTodoList', authenticateToken, (req, res) => {
     TodoModel.create({
@@ -143,28 +148,6 @@ app.delete('/deleteTodoList/:id', authenticateToken, (req, res) => {
             return res.status(500).json({ error: err.message })
         })
 })
-
-app.get('/oauth2callback', async (req, res) => {
-    const code = req.query.code;
-    if (!code) {
-      return res.status(400).send('Authorization code is missing');
-    }
-  
-    try {
-      // Exchange authorization code for access and refresh tokens
-      const { tokens } = await oAuth2Client.getToken(code);
-      oAuth2Client.setCredentials(tokens);
-  
-      // Optionally, store tokens in your database for future use
-      // For example:
-      // await User.findByIdAndUpdate(userId, { tokens });
-
-      res.redirect('/');
-    } catch (error) {
-      console.error('Error exchanging authorization code for tokens:', error);
-      res.status(500).send('Internal Server Error');
-    }
-  });
 
 app.listen(PORT, () => {
     console.log(`Server running on ${PORT}`)

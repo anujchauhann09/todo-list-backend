@@ -10,6 +10,9 @@ lerna-debug.log*
 node_modules
 *.local
 .env
+utilities/googleOAuth.js
+utilities/mailer.test.js
+
 
 # Editor directories and files
 .vscode/*

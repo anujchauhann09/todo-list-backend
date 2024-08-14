@@ -20,8 +20,11 @@ const todoSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
     },
+    isRemainderSend: {
+        type: Boolean,
+        default: false
+    }
 })
 
 const TodoList = mongoose.model("TodoList", todoSchema)
