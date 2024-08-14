@@ -88,7 +88,8 @@ app.post('/addTodoList', authenticateToken, (req, res) => {
         task: req.body.task,
         status: req.body.status,
         deadline: req.body.deadline,
-        email: req.body.email
+        email: req.body.email,
+        isRemainderSend: false
     })
         .then(todo => {
             return res.json(todo)
