@@ -37,10 +37,10 @@ router.post('/login', async (req, res) => {
 router.get('/getTodoList', authenticateToken, (req, res) => {
     TodoModel.find({ userId: req.user.id })
       .then(todoList => {
-        return res.json(todoList)
+        return res.status(200).json(todoList)
       })
       .catch(err => {
-        return res.json(err)
+        return res.status(400).json({error: err.message})
       });
 });
 

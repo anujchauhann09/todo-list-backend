@@ -6,6 +6,7 @@ const helmet = require('helmet')
 const cron = require('node-cron');
 const sendEmail = require('./utilities/mailer.js')
 const TodoModel = require('./models/todoList.model.js')
+const ContactModel = require('./models/contact.model.js')
 const User = require('./models/user.model.js')
 const authRoutes = require('./routes/auth')
 const authenticateToken = require('./middleware/authenticateToken.js')
@@ -63,7 +64,6 @@ mongoose.connection.once('open', () => {
 cron.schedule('0 * * * *', async () => {
   try {
     const now = new Date()
-    // const todos = await TodoModel.find({ deadline: { $lte: now }, isRemainderSend: false }).populate('userId')
     const todos = await TodoModel.find({
         deadline: { $lte: now },
         isRemainderSend: false,
@@ -98,10 +98,10 @@ app.post('/addTodoList', authenticateToken, (req, res) => {
         // submissionDate is automatically set by default
     })
         .then(todo => {
-            return res.json(todo)
+            return res.status(200).json({ message: 'Success' })
         })
         .catch(err => {
-            return res.json(err)
+            return res.status(400).json({ error: err.message })
         })
 })
 
@@ -154,6 +154,22 @@ app.delete('/deleteTodoList/:id', authenticateToken, (req, res) => {
         })
         .catch(err => {
             return res.status(500).json({ error: err.message })
+        })
+})
+
+app.post('/contact', authenticateToken, (req, res) => {
+    ContactModel.create({
+        name: req.body.name,
+        email: req.body.email,
+        contactNumber: req.body.contactNumber,
+        message: req.body.message
+        // submissionDate is automatically set by default
+    })
+        .then(cont => {
+            return res.status(200).json({ message: 'Success' })
+        })
+        .catch(err => {
+            return res.status(400).json({ error: err.message })
         })
 })
 
