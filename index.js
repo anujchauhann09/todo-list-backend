@@ -63,7 +63,12 @@ mongoose.connection.once('open', () => {
 cron.schedule('0 * * * *', async () => {
   try {
     const now = new Date()
-    const todos = await TodoModel.find({ deadline: { $lte: now }, isRemainderSend: false }).populate('userId')
+    // const todos = await TodoModel.find({ deadline: { $lte: now }, isRemainderSend: false }).populate('userId')
+    const todos = await TodoModel.find({
+        deadline: { $lte: now },
+        isRemainderSend: false,
+        status: { $in: ['Pending', 'In Progress'] }
+    }).populate('userId')
 
     todos.forEach(todo => {
       const emailSubject = 'Reminder: Your Task Deadline is Approaching';
@@ -90,6 +95,7 @@ app.post('/addTodoList', authenticateToken, (req, res) => {
         deadline: req.body.deadline,
         email: req.body.email,
         isRemainderSend: false
+        // submissionDate is automatically set by default
     })
         .then(todo => {
             return res.json(todo)
@@ -105,7 +111,8 @@ app.post('/updateTodoList/:id', authenticateToken, (req, res) => {
         task: req.body.task,
         status: req.body.status,
         deadline: req.body.deadline,
-        email: req.body.email
+        email: req.body.email,
+        submissionDate: Date.now()
     }
     const userId = req.user.id
 

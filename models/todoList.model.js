@@ -14,8 +14,14 @@ const todoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    submissionDate: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
     deadline: {
-        type: String
+        type: String,
+        required: true
     },
     email: {
         type: String,
@@ -23,7 +29,8 @@ const todoSchema = new mongoose.Schema({
     },
     isRemainderSend: {
         type: Boolean,
-        default: false
+        default: false,
+        required: true
     }
 })
 
