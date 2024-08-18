@@ -101,7 +101,7 @@ app.post('/addTodoList', authenticateToken, (req, res) => {
             return res.status(200).json({ message: 'Success' })
         })
         .catch(err => {
-            return res.status(400).json({ error: err.message })
+            return res.status(500).json({ error: err.message })
         })
 })
 
@@ -157,7 +157,7 @@ app.delete('/deleteTodoList/:id', authenticateToken, (req, res) => {
         })
 })
 
-app.post('/contact', authenticateToken, (req, res) => {
+app.post('/contact', (req, res) => {
     ContactModel.create({
         name: req.body.name,
         email: req.body.email,
@@ -169,7 +169,7 @@ app.post('/contact', authenticateToken, (req, res) => {
             return res.status(200).json({ message: 'Success' })
         })
         .catch(err => {
-            return res.status(400).json({ error: err.message })
+            return res.status(500).json({ error: err.message })
         })
 })
 
